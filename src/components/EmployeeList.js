@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Employee from "./Employee";
 import { EmployeeContext } from "../contexts/EmployeeContext";
 import { Button, Modal } from "react-bootstrap";
@@ -13,6 +13,15 @@ const EmployeeList = () => {
    const handleShow = () => setShow(true)
 
    const handleClose = () => setShow(false)
+
+  /* useEffect(() => {
+      handleClose();
+    }, [employees]
+   ) */
+
+   useEffect(() => {
+    handleClose();
+   }, [employees])
 
     return (
         <>
@@ -43,7 +52,11 @@ const EmployeeList = () => {
 					</tr>
 				</thead>
 				<tbody>
-        <Employee employees={employees}/>
+          {
+          employees.map((employee) => (
+          <tr key={employee.id}>
+        <Employee employee={employee}/></tr>))
+        }
         </tbody>
         </table>
         
