@@ -1,14 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import Employee from "./Employee";
 import { EmployeeContext } from "../contexts/EmployeeContext";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Alert } from "react-bootstrap";
 import AddForm from "./AddForm";
+import Pagination from "./Pagination";
 
 const EmployeeList = () => {
 
-   const {employees} =  useContext(EmployeeContext)
+   const {sortedEmployees} =  useContext(EmployeeContext)
 
    const [show, setShow] = useState(false)
+
+   const [showAlert, setShowAlert] = useState(false);
+
+   const [currentPage, setCurrentPage] = useState(1)
+
+   const [employeesPerPage] = useState(2)
+
+   //const handleShowAlert = () => setShowAlert(true);
+    
+   
 
    const handleShow = () => setShow(true)
 
@@ -18,11 +29,26 @@ const EmployeeList = () => {
       handleClose();
     }, [employees]
    ) */
-
+const handleShowAlert = () => {
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 2000);
+   };
    useEffect(() => {
     handleClose();
-   }, [employees])
+    
+   return() => {
+      
+      handleShowAlert();
+    } 
+   }, [sortedEmployees])
 
+  // en son çalışanın index numarası
+   const indexOfLastEmployee = currentPage * employeesPerPage; // O anki sayfayla , sayfada kaç tane çalışan göstermek istiyorsak onun çarpmına eşit olacak
+   const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
+   const currentEmployees = sortedEmployees.slice(indexOfFirstEmployee, indexOfLastEmployee); // o anki çalışan sayısı
+   const totalPagesNum = Math.ceil(sortedEmployees.length /employeesPerPage) // tam sayı çıkması için 
     return (
         <>
         <div className="table-title">
@@ -41,6 +67,10 @@ const EmployeeList = () => {
               </div>
             </div>
 
+            <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>
+              Employee List Succesfully updated!
+              </Alert>
+
         <table className="table table-striped table-hover">
 				<thead>
 					<tr>
@@ -53,12 +83,17 @@ const EmployeeList = () => {
 				</thead>
 				<tbody>
           {
-          employees.map((employee) => (
+          currentEmployees.map((employee) => (
           <tr key={employee.id}>
         <Employee employee={employee}/></tr>))
         }
         </tbody>
         </table>
+
+        <Pagination pages={totalPagesNum} setCurrentPage={setCurrentPage}
+        currentEmployees ={currentEmployees}
+        sortedEmployees  ={sortedEmployees}
+        />
         
         <Modal show={show} onHide={handleClose}>
             <Modal.Header className="modal-header" closeButton>
@@ -80,3 +115,5 @@ const EmployeeList = () => {
     ) 
 }
 export default EmployeeList;
+
+//.sort((a, b) => a.name.localeCompare(b.name))    (a,b) => (a.name < b.name ? -1 : 1)

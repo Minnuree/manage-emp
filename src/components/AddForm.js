@@ -10,6 +10,7 @@ const AddForm = () => {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
+
   
   const handleSubmit= (e) => {
     e.preventDefault(); // varsayılan işlemleri engelleyip değerleri fonksiyonumuza göndermesini sağlıyoruz
